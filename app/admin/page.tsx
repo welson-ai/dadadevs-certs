@@ -1,49 +1,22 @@
 
 
-import type React from "react"
-import {
-  Key,
-  AlertCircle,
-  CheckCircle2,
-  Trash2,
-  Ban,
-  Download,
-  Eye,
-  Bitcoin,
-  Upload,
-  ArrowLeft,
-  ImageIcon,
-} from "lucide-react"
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Textarea } from "@/components/ui/textarea"
-import {
-  generateKeyPair,
-  exportPrivateKey,
-  exportPublicKey,
-  importPrivateKey,
-  signCertificate,
-  generateCertificateId,
-  type CertificateData,
-  type SignedCertificate,
-} from "@/lib/crypto"
-import { saveKeys, getPrivateKey, getPublicKey, clearKeys } from "@/lib/storage"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CertificateDisplay } from "@/components/certificate-display"
-import {
-  saveCertificateToSupabase,
-  getCertificatesByAdmin,
-  revokeCertificateInSupabase,
-  deleteCertificateFromSupabase,
-} from "@/lib/supabase-certificates"
-import { createClient } from "@/lib/supabase/client"
+// SERVER COMPONENT — no "use client"
+
+import { createClient } from "@/lib/supabase/server.server"
+import AdminView from "./AdminView"
+
+export default async function Page() {
+  const supabase = await createClient()
+
+  // Fetch certificates for admin dashboard
+  const { data: certificates } = await supabase
+    .from("certificates")
+    .select("*")
+    .order("created_at", { ascending: false })
+
+  return <AdminView initialCertificates={certificates || []} />
+}
+
 
 export default function AdminPage() {
   const [keysExist, setKeysExist] = useState(false)
