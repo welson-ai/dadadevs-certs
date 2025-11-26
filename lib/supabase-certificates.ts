@@ -1,5 +1,4 @@
 import { createClient as createBrowserClient } from "@/lib/supabase/client"
-import { createClient as createServerClient } from "@/lib/supabase/server"
 import type { SignedCertificate } from "@/lib/crypto"
 
 // Browser client functions
@@ -13,7 +12,7 @@ export async function saveCertificateToSupabase(certificate: SignedCertificate, 
       recipient_name: certificate.recipientName,
       course_name: certificate.courseName,
       issuer_name: certificate.issuerName,
-      issuer_details: certificate.issuerOrganization,
+      issuer_details: ceartificate.issuerOrganization,
       issue_date: certificate.issueDate,
       public_key: certificate.publicKey,
       signature: certificate.signature,
@@ -64,15 +63,6 @@ export async function deleteCertificateFromSupabase(certId: string) {
 // Public function to get any certificate by ID (for verification page)
 export async function getPublicCertificateById(certId: string) {
   const supabase = createBrowserClient()
-
-  const { data, error } = await supabase.from("certificates").select("*").eq("id", certId).single()
-
-  return { data, error }
-}
-
-// Server-side verification function
-export async function verifyCertificateExists(certId: string) {
-  const supabase = await createServerClient()
 
   const { data, error } = await supabase.from("certificates").select("*").eq("id", certId).single()
 
